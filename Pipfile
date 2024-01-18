@@ -12,6 +12,7 @@ mypy = "*"
 psycopg2 = "*"
 python-dotenv = "*"
 pre-commit = "*"
+pytest = "*"
 
 [dev-packages]
 
