@@ -13,6 +13,7 @@ psycopg2 = "*"
 python-dotenv = "*"
 pre-commit = "*"
 pytest = "*"
+pytest-django = "*"
 
 [dev-packages]
 
