@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-
+AUTH_USER_MODEL = 'Customer.Customer'
 # Application definition
 
 INSTALLED_APPS = [
@@ -37,10 +37,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
+    "django_countries",
     "CarDealership.apps.CardealershipConfig",
     "Customer.apps.CustomerConfig",
     "Dealer.apps.DealerConfig",
-    "rest_framework",
 ]
 
 MIDDLEWARE = [

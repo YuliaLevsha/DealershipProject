@@ -14,6 +14,8 @@ python-dotenv = "*"
 pre-commit = "*"
 pytest = "*"
 pytest-django = "*"
+django-countries = "*"
+django-money = "*"
 
 [dev-packages]
 
