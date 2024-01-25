@@ -12,4 +12,4 @@ class BaseModel(models.Model):
 
 
 class G8Countries(Countries):
-    only = ['CA', 'FR', 'DE', 'IT', 'JP', 'RU', 'GB', 'CN']
+    only = ["CA", "FR", "DE", "IT", "JP", "RU", "GB", "CN"]
