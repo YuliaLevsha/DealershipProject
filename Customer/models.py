@@ -53,9 +53,7 @@ class Offer(BaseModel):  # Оффер, который создает польз�
         verbose_name = "Offer"
 
 
-class CustomerPurchaseHistory(
-    BaseModel
-):  # История покупок пользователя / история продаж для автосалона
+class CustomerPurchaseHistory(BaseModel):  # История покупок пользователя / история продаж для автосалона
     customer = models.ForeignKey(
         Customer,
         on_delete=models.SET_NULL,
@@ -78,5 +76,5 @@ class CustomerPurchaseHistory(
     )  # За какую цену купил машину пользователь
 
     class Meta:
-        db_table = "customer_car_dealership"
-        verbose_name = "CustomerCarDealership"
+        db_table = "customer_history"
+        verbose_name = "CustomerPurchaseHistory"
