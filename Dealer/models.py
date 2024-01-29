@@ -92,7 +92,9 @@ class DealerCars(BaseModel):  # Машины поставщика с ценам�
         verbose_name = "DealerCars"
 
 
-class DealersSalesHistory(BaseModel):  # История продаж для поставщика / список машин для автосалона
+class DealersSalesHistory(
+    BaseModel
+):  # История продаж для поставщика / список машин для автосалона
     id_dealer_car = models.ForeignKey(
         DealerCars,
         on_delete=models.SET_NULL,
