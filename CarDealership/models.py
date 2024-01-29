@@ -19,7 +19,7 @@ class CarDealership(BaseModel):  # Автосалон
     description_cars = models.JSONField(
         encoder=None, decoder=None, verbose_name="Description future cars to sale"
     )  # Характеристики авто, которые салон будет продавать
-    available_car_models = models.ManyToManyField(
+    car_models = models.ManyToManyField(
         "Dealer.CarModel",
         through="AvailableCarModels",
         verbose_name="Models to sale",
@@ -42,9 +42,7 @@ class CarDealership(BaseModel):  # Автосалон
         verbose_name = "CarDealership"
 
 
-class ProfitableDealers(
-    BaseModel
-):  # Выгодные поставщи, у которых покупаем и модели машин (товар)
+class ProfitableDealers(BaseModel):  # Выгодные поставщи, у которых покупаем и модели машин (товар)
     car_dealership = models.ForeignKey(
         CarDealership,
         on_delete=models.SET_NULL,
@@ -127,5 +125,5 @@ class AvailableCarModels(BaseModel):  # Модели машин, который 
     )  # Автосалон
 
     class Meta:
-        db_table = "available_models"
+        db_table = "available_car_models"
         verbose_name = "AvailableCarModels"
