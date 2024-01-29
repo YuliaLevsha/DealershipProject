@@ -9,7 +9,7 @@ class Customer(AbstractUser):  # Покупатель (пользователь)
         max_digits=14,
         decimal_places=2,
         default_currency="USD",
-        verbose_name="Customer balance",
+        verbose_name="Customer balance"
     )  # Баланс
     date_birth = models.DateField(blank=False, verbose_name="Customer date birth")
     passport = models.CharField(
@@ -18,7 +18,7 @@ class Customer(AbstractUser):  # Покупатель (пользователь)
     purchase_history = models.ManyToManyField(
         "Dealer.DealersSalesHistory",
         through="CustomerPurchaseHistory",
-        verbose_name="List cars of customer",
+        verbose_name="List cars of customer"
     )  # История покупок пользователя
 
     class Meta:
@@ -31,21 +31,21 @@ class Offer(BaseModel):  # Оффер, который создает польз�
         max_digits=14,
         decimal_places=2,
         default_currency="USD",
-        verbose_name="Max price of car to buy",
+        verbose_name="Max price of car to buy"
     )
     interested_in_car = models.ForeignKey(
         "Dealer.Car",
         on_delete=models.SET_NULL,
         null=True,
         verbose_name="Car which customer wanna buy",
-        related_name="customers",
+        related_name="customers"
     )  # Машина, которой заинтересован пользователь
     customer = models.ForeignKey(
         Customer,
         on_delete=models.SET_NULL,
         null=True,
         verbose_name="Customer who create offer",
-        related_name="offers",
+        related_name="offers"
     )
 
     class Meta:
@@ -61,7 +61,7 @@ class CustomerPurchaseHistory(
         on_delete=models.SET_NULL,
         null=True,
         verbose_name="Customer who buy car",
-        related_name="list_cars",
+        related_name="list_cars"
     )
     id_dealership_car = models.ForeignKey(
         "Dealer.DealersSalesHistory",
@@ -74,7 +74,7 @@ class CustomerPurchaseHistory(
         max_digits=14,
         decimal_places=2,
         default_currency="USD",
-        verbose_name="Car price for customer",
+        verbose_name="Car price for customer"
     )  # За какую цену купил машину пользователь
 
     class Meta:

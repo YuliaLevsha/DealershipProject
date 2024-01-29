@@ -10,7 +10,7 @@ class Dealer(BaseModel):  # Поставщик
     foundation_year = models.PositiveIntegerField(
         blank=False,
         validators=[MaxValueValidator(2024)],
-        verbose_name="Dealer foundation year",
+        verbose_name="Dealer foundation year"
     )
     customers_count = models.PositiveIntegerField(
         default=0, verbose_name="Dealer customers count"
@@ -19,7 +19,7 @@ class Dealer(BaseModel):  # Поставщик
         "Car",
         through="DealerCars",
         verbose_name="Dealers cars to sale",
-        related_name="dealers",
+        related_name="dealers"
     )
 
     class Meta:
@@ -40,7 +40,7 @@ class Car(BaseModel):  # Машина
         CarModel,
         on_delete=models.CASCADE,
         verbose_name="Car model",
-        related_name="cars",
+        related_name="cars"
     )  # модель машины
     car_year = models.PositiveIntegerField(
         blank=False, verbose_name="Car year"
@@ -71,20 +71,20 @@ class DealerCars(BaseModel):  # Машины поставщика с ценам�
         on_delete=models.SET_NULL,
         null=True,
         related_name="list_cars",
-        verbose_name="Dealer of car",
+        verbose_name="Dealer of car"
     )
     car = models.ForeignKey(
         Car,
         on_delete=models.SET_NULL,
         null=True,
         related_name="list_dealers",
-        verbose_name="Car to sale",
+        verbose_name="Car to sale"
     )
     price = MoneyField(
         max_digits=14,
         decimal_places=2,
         default_currency="USD",
-        verbose_name="Car price from dealer",
+        verbose_name="Car price from dealer"
     )
 
     class Meta:
@@ -100,26 +100,26 @@ class DealersSalesHistory(
         on_delete=models.SET_NULL,
         null=True,
         related_name="sales_history",
-        verbose_name="Dealer and car",
+        verbose_name="Dealer and car"
     )  # ссылка на DealerCars, которая содержит и поставщика и машину
     car_dealership = models.ForeignKey(
         "CarDealership.CarDealership",
         on_delete=models.SET_NULL,
         null=True,
         related_name="list_cars",
-        verbose_name="Car dealership who bought car",
+        verbose_name="Car dealership who bought car"
     )
     discount = models.ForeignKey(
         "CarDealership.Discount",
         on_delete=models.SET_NULL,
         null=True,
-        verbose_name="Discount for bought",
+        verbose_name="Discount for bought"
     )
     finally_cost = MoneyField(
         max_digits=14,
         decimal_places=2,
         default_currency="USD",
-        verbose_name="Car price for car dealership",
+        verbose_name="Car price for car dealership"
     )  # цена покупки для автосалона
 
     class Meta:
