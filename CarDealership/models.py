@@ -14,7 +14,7 @@ class CarDealership(BaseModel):  # Автосалон
         max_digits=14,
         decimal_places=2,
         default_currency="USD",
-        verbose_name="Car dealership balance",
+        verbose_name="Car dealership balance"
     )  # Баланс
     description_cars = models.JSONField(
         encoder=None, decoder=None, verbose_name="Description future cars to sale"
@@ -23,13 +23,12 @@ class CarDealership(BaseModel):  # Автосалон
         "Dealer.CarModel",
         through="AvailableCarModels",
         verbose_name="Models to sale",
-        related_name="car_dealerships",
+        related_name="in_dealership"
     )  # Модели авто, которые будут найдены по description_cars
     profitable_dealers = models.ManyToManyField(
         "Dealer.Dealer",
         through="ProfitableDealers",
-        verbose_name="Profitable dealers",
-        related_name="car_dealership",
+        verbose_name="Profitable dealers"
     )  # Выгодный поставщик, у которых покупаем, и модели какие покупаем
     dealership_cars = models.ManyToManyField(  # Список машин, которые продает автосалон
         "Dealer.DealerCars",
@@ -82,7 +81,7 @@ class Discount(BaseModel):  # Скидка
         CarDealership,
         on_delete=models.SET_NULL,
         null=True,
-        related_name="discounts",
+        related_name="list_discounts",
         verbose_name="Discount for car dealership",
     )  # На какой салон распространяется скидка
     name = models.CharField(max_length=255, verbose_name="Discount name")
@@ -101,7 +100,6 @@ class CarsDiscount(BaseModel):  # Машины, на которые распро
         "Dealer.Car",
         on_delete=models.SET_NULL,
         null=True,
-        related_name="discounts",
         verbose_name="Discount available for cars",
     )
     discount = models.ForeignKey(
@@ -118,20 +116,16 @@ class CarsDiscount(BaseModel):  # Машины, на которые распро
 
 
 class AvailableCarModels(BaseModel):  # Модели машин, который продаются в салоне
-    car_model = models.ForeignKey(
-        "Dealer.CarModel",
-        on_delete=models.SET_NULL,
-        null=True,
-        verbose_name="Model of car",
-    )  # Модель машины
+    car_model = models.ForeignKey('Dealer.CarModel', on_delete=models.SET_NULL, null=True, verbose_name="Model of car"
+                                  )  # Модель машины
     car_dealership = models.ForeignKey(
         CarDealership,
         on_delete=models.SET_NULL,
         null=True,
         related_name="list_car_model",
-        verbose_name="Car dealership",
+        verbose_name="Car dealership"
     )  # Автосалон
 
     class Meta:
-        db_table = "available_car_models"
+        db_table = "available_models"
         verbose_name = "AvailableCarModels"
