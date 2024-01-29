@@ -7,7 +7,9 @@ from base_model import BaseModel, G8Countries
 
 class CarDealership(BaseModel):  # Автосалон
     name = models.CharField(max_length=255, verbose_name="Car dealership name")
-    location = CountryField(countries=G8Countries, verbose_name="Car dealership country")  # Местоположение автосалона
+    location = CountryField(
+        countries=G8Countries, verbose_name="Car dealership country"
+    )  # Местоположение автосалона
     balance = MoneyField(
         max_digits=14,
         decimal_places=2,
@@ -41,13 +43,27 @@ class CarDealership(BaseModel):  # Автосалон
         verbose_name = "CarDealership"
 
 
-class ProfitableDealers(BaseModel):  # Выгодные поставщи, у которых покупаем и модели машин (товар)
-    car_dealership = models.ForeignKey(CarDealership, on_delete=models.SET_NULL, null=True,
-                                       related_name='profit_dealers')
-    dealer = models.ForeignKey('Dealer.Dealer', on_delete=models.SET_NULL, null=True,
-                               verbose_name="Profitable dealers")
-    car_model = models.ForeignKey('Dealer.CarModel', on_delete=models.SET_NULL, null=True,
-                                  verbose_name="Profitable car models")
+class ProfitableDealers(
+    BaseModel
+):  # Выгодные поставщи, у которых покупаем и модели машин (товар)
+    car_dealership = models.ForeignKey(
+        CarDealership,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="profit_dealers",
+    )
+    dealer = models.ForeignKey(
+        "Dealer.Dealer",
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name="Profitable dealers",
+    )
+    car_model = models.ForeignKey(
+        "Dealer.CarModel",
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name="Profitable car models",
+    )
 
     class Meta:
         db_table = "profitable_dealers"
@@ -56,7 +72,9 @@ class ProfitableDealers(BaseModel):  # Выгодные поставщи, у к�
 
 class Discount(BaseModel):  # Скидка
     start_date = models.DateTimeField(verbose_name="Start discount")  # С какого числа
-    finish_date = models.DateTimeField(verbose_name="Finish discount")  # По какое число действует
+    finish_date = models.DateTimeField(
+        verbose_name="Finish discount"
+    )  # По какое число действует
     percent = models.PositiveIntegerField(
         validators=[MaxValueValidator(50)], verbose_name="Percent discount"
     )  # Сколько в % скидка
@@ -65,12 +83,12 @@ class Discount(BaseModel):  # Скидка
         on_delete=models.SET_NULL,
         null=True,
         related_name="discounts",
-        verbose_name="Discount for car dealership"
+        verbose_name="Discount for car dealership",
     )  # На какой салон распространяется скидка
     name = models.CharField(max_length=255, verbose_name="Discount name")
     description = models.CharField(max_length=255, verbose_name="Discount description")
     cars = models.ManyToManyField(
-        'Dealer.Car', through='CarsDiscount', verbose_name='Discount for cars'
+        "Dealer.Car", through="CarsDiscount", verbose_name="Discount for cars"
     )  # Список машин, на которые распространяется акция
 
     class Meta:
@@ -79,14 +97,24 @@ class Discount(BaseModel):  # Скидка
 
 
 class CarsDiscount(BaseModel):  # Машины, на которые распространяется акция
-    car = models.ForeignKey('Dealer.Car', on_delete=models.SET_NULL, null=True, related_name="discounts",
-                            verbose_name="Discount available for cars")
-    discount = models.ForeignKey(Discount, on_delete=models.SET_NULL, null=True, related_name="list_cars",
-                                 verbose_name="Discount")
+    car = models.ForeignKey(
+        "Dealer.Car",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="discounts",
+        verbose_name="Discount available for cars",
+    )
+    discount = models.ForeignKey(
+        Discount,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="list_cars",
+        verbose_name="Discount",
+    )
 
     class Meta:
-        db_table = 'cars_discount'
-        verbose_name = 'CarsDiscount'
+        db_table = "cars_discount"
+        verbose_name = "CarsDiscount"
 
 
 class AvailableCarModels(BaseModel):  # Модели машин, который продаются в салоне

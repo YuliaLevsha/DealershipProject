@@ -42,13 +42,19 @@ class Car(BaseModel):  # Машина
         verbose_name="Car model",
         related_name="cars",
     )  # модель машины
-    car_year = models.PositiveIntegerField(blank=False, verbose_name="Car year")  # Год выпуска машины
+    car_year = models.PositiveIntegerField(
+        blank=False, verbose_name="Car year"
+    )  # Год выпуска машины
     car_color = models.CharField(max_length=255, verbose_name="Car color")
     number_of_doors = models.PositiveIntegerField(
         default=2, blank=True, verbose_name="Number of doors in car"
     )
-    body_type = models.CharField(max_length=255, verbose_name="Car body type")  # Тип кузова
-    type_drive = models.CharField(max_length=255, verbose_name="Car type drive")  # Тип привода
+    body_type = models.CharField(
+        max_length=255, verbose_name="Car body type"
+    )  # Тип кузова
+    type_drive = models.CharField(
+        max_length=255, verbose_name="Car type drive"
+    )  # Тип привода
     country = CountryField(countries=G8Countries, verbose_name="Car country")
     volume_fuel_tank = models.PositiveIntegerField(
         blank=False, verbose_name="Car volume of fuel tank"
@@ -86,14 +92,25 @@ class DealerCars(BaseModel):  # Машины поставщика с ценам�
         verbose_name = "DealerCars"
 
 
-class DealersSalesHistory(BaseModel):  # История продаж для поставщика / список машин для автосалона
-    id_dealer_car = models.ForeignKey(DealerCars, on_delete=models.SET_NULL, null=True, related_name="sales_history",
-                                      verbose_name="Dealer and car"
-                                      )  # ссылка на DealerCars, которая содержит и поставщика и машину
-    car_dealership = models.ForeignKey('CarDealership.CarDealership', on_delete=models.SET_NULL, null=True,
-                                       related_name="list_cars", verbose_name="Car dealership who bought car")
+class DealersSalesHistory(
+    BaseModel
+):  # История продаж для поставщика / список машин для автосалона
+    id_dealer_car = models.ForeignKey(
+        DealerCars,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="sales_history",
+        verbose_name="Dealer and car",
+    )  # ссылка на DealerCars, которая содержит и поставщика и машину
+    car_dealership = models.ForeignKey(
+        "CarDealership.CarDealership",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="list_cars",
+        verbose_name="Car dealership who bought car",
+    )
     discount = models.ForeignKey(
-        'CarDealership.Discount',
+        "CarDealership.Discount",
         on_delete=models.SET_NULL,
         null=True,
         verbose_name="Discount for bought",

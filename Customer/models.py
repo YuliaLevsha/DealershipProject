@@ -12,7 +12,9 @@ class Customer(AbstractUser):  # Покупатель (пользователь)
         verbose_name="Customer balance",
     )  # Баланс
     date_birth = models.DateField(blank=False, verbose_name="Customer date birth")
-    passport = models.CharField(max_length=10, verbose_name="Customer passport")  # Серия и номер паспорта
+    passport = models.CharField(
+        max_length=10, verbose_name="Customer passport"
+    )  # Серия и номер паспорта
     purchase_history = models.ManyToManyField(
         "Dealer.DealersSalesHistory",
         through="CustomerPurchaseHistory",
@@ -32,8 +34,12 @@ class Offer(BaseModel):  # Оффер, который создает польз�
         verbose_name="Max price of car to buy",
     )
     interested_in_car = models.ForeignKey(
-        'Dealer.Car', on_delete=models.SET_NULL, null=True, verbose_name="Car which customer wanna buy",
-        related_name='customers')  # Машина, которой заинтересован пользователь
+        "Dealer.Car",
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name="Car which customer wanna buy",
+        related_name="customers",
+    )  # Машина, которой заинтересован пользователь
     customer = models.ForeignKey(
         Customer,
         on_delete=models.SET_NULL,
@@ -47,7 +53,9 @@ class Offer(BaseModel):  # Оффер, который создает польз�
         verbose_name = "Offer"
 
 
-class CustomerPurchaseHistory(BaseModel):  # История покупок пользователя / история продаж для автосалона
+class CustomerPurchaseHistory(
+    BaseModel
+):  # История покупок пользователя / история продаж для автосалона
     customer = models.ForeignKey(
         Customer,
         on_delete=models.SET_NULL,
