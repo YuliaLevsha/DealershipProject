@@ -15,11 +15,6 @@ class Customer(AbstractUser):  # Покупатель (пользователь)
     passport = models.CharField(
         max_length=10, verbose_name="Customer passport"
     )  # Серия и номер паспорта
-    purchase_history = models.ManyToManyField(
-        "Dealer.DealersSalesHistory",
-        through="CustomerPurchaseHistory",
-        verbose_name="List cars of customer"
-    )  # История покупок пользователя
 
     class Meta:
         db_table = "customer"
@@ -58,7 +53,7 @@ class CustomerPurchaseHistory(
 ):  # История покупок пользователя / история продаж для автосалона
     customer = models.ForeignKey(
         Customer,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         null=True,
         verbose_name="Customer who buy car",
         related_name="list_cars"

@@ -25,9 +25,6 @@ class CarDealership(BaseModel):  # Автосалон
         verbose_name="Models to sale",
         related_name="in_dealership"
     )  # Модели авто, которые будут найдены по description_cars
-    profitable_dealers = models.ManyToManyField(
-        "Dealer.Dealer", through="ProfitableDealers", verbose_name="Profitable dealers"
-    )  # Выгодный поставщик, у которых покупаем, и модели какие покупаем
     dealership_cars = models.ManyToManyField(  # Список машин, которые продает автосалон
         "Dealer.DealerCars",
         through="Dealer.DealersSalesHistory",
@@ -40,33 +37,6 @@ class CarDealership(BaseModel):  # Автосалон
         verbose_name = "CarDealership"
 
 
-class ProfitableDealers(
-    BaseModel
-):  # Выгодные поставщи, у которых покупаем и модели машин (товар)
-    car_dealership = models.ForeignKey(
-        CarDealership,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="profit_dealers"
-    )
-    dealer = models.ForeignKey(
-        "Dealer.Dealer",
-        on_delete=models.SET_NULL,
-        null=True,
-        verbose_name="Profitable dealers"
-    )
-    car_model = models.ForeignKey(
-        "Dealer.CarModel",
-        on_delete=models.SET_NULL,
-        null=True,
-        verbose_name="Profitable car models"
-    )
-
-    class Meta:
-        db_table = "profitable_dealers"
-        verbose_name = "ProfitableDealers"
-
-
 class Discount(BaseModel):  # Скидка
     start_date = models.DateTimeField(verbose_name="Start discount")  # С какого числа
     finish_date = models.DateTimeField(
@@ -77,7 +47,7 @@ class Discount(BaseModel):  # Скидка
     )  # Сколько в % скидка
     car_dealership = models.ForeignKey(
         CarDealership,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         null=True,
         related_name="list_discounts",
         verbose_name="Discount for car dealership"
