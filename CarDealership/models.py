@@ -54,33 +54,10 @@ class Discount(BaseModel):  # Скидка
     )  # На какой салон распространяется скидка
     name = models.CharField(max_length=255, verbose_name="Discount name")
     description = models.CharField(max_length=255, verbose_name="Discount description")
-    cars = models.ManyToManyField(
-        "Dealer.Car", through="CarsDiscount", verbose_name="Discount for cars"
-    )  # Список машин, на которые распространяется акция
 
     class Meta:
         db_table = "discounts"
         verbose_name = "Discounts"
-
-
-class CarsDiscount(BaseModel):  # Машины, на которые распространяется акция
-    car = models.ForeignKey(
-        "Dealer.Car",
-        on_delete=models.SET_NULL,
-        null=True,
-        verbose_name="Discount available for cars",
-    )
-    discount = models.ForeignKey(
-        Discount,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="list_cars",
-        verbose_name="Discount",
-    )
-
-    class Meta:
-        db_table = "cars_discount"
-        verbose_name = "CarsDiscount"
 
 
 class AvailableCarModels(BaseModel):  # Модели машин, который продаются в салоне
