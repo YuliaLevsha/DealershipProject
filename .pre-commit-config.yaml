@@ -9,12 +9,12 @@ repos:
       - id: trailing-whitespace
   - repo: local
     hooks:
-      - id: black
-        name: run black
-        entry: black .
-        types: [python]
-        language: system
-        stages: [push, commit]
+#      - id: black
+#        name: run black
+#        entry: black .
+#        types: [python]
+#        language: system
+#        stages: [push, commit]
 
       - id: flake8
         name: run flake8
