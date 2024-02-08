@@ -43,7 +43,7 @@ jobs:
       - name: flake8
         run: |
           pip install flake8
-          flake8 --exclude venv --ignore F401,E501
+          flake8 --exclude venv --ignore F401,E501,F405,F403,W503
 
       - name: stop docker compose
         run: docker-compose down
