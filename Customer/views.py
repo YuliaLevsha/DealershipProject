@@ -1,3 +1,142 @@
-from django.shortcuts import render
+import os
+from django.contrib.sites.shortcuts import get_current_site
+from rest_framework.response import Response
+from django.urls import reverse_lazy
+from rest_framework_simplejwt.exceptions import TokenError
+from Customer.serializers import *
+from rest_framework import mixins, status, viewsets, generics, permissions
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from Customer.tokens import account_activation_token
+from django.core.mail import send_mail
+from django.http import JsonResponse
 
-# Create your views here.
+
+def send_to_email(request, subject, user, name_url, message):
+    current_site = get_current_site(request)
+    token = account_activation_token.make_token(user)
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    domain = current_site.domain
+    activation_url = reverse_lazy(name_url, kwargs={'uidb64': uid, 'token': token})
+    send_mail(subject=subject, message=message + f'{domain}{activation_url}',
+              from_email=os.environ.get("EMAIL_HOST_USER"), recipient_list=[user.email], fail_silently=False)
+
+
+class RegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
+    queryset = Customer.objects.all()
+    serializer_class = RegisterSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        register_serializer = self.serializer_class(data=request.data)
+        if register_serializer.is_valid():
+            register_serializer.save()
+
+            subject = 'Подтверждение своего электронного адреса'
+            user = Customer.objects.get(email=register_serializer.validated_data.get('email'))
+            message = 'Пожалуйста, перейдите по следующей ссылке, чтобы подтвердить свой адрес электронной почты: ' \
+                      'http://'
+            send_to_email(request=request, subject=subject, user=user, message=message, name_url='confirm_email')
+            return Response({'data': register_serializer.validated_data,
+                            'message': 'На вашу почту было отправлено сообщение для подтверждения вашей почты'},
+                            status=status.HTTP_201_CREATED)
+        return Response(register_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserConfirmEmailViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
+
+    def retrieve(self, request, uidb64, token):
+        uid = urlsafe_base64_decode(uidb64)
+        user = Customer.objects.get(pk=uid)
+        if user is not None and account_activation_token.check_token(user, token):
+            user.is_active = True
+            user.save()
+            return JsonResponse({'Email was confirmed': 'Yes!'})
+        return JsonResponse({'Have access': 'No!'})
+
+
+class LoginView(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        login_serializer = self.serializer_class(data=request.data)
+        login_serializer.is_valid(raise_exception=True)
+        return Response({'data': login_serializer.data}, status=status.HTTP_200_OK)
+
+
+class LogoutView(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated, ]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data['refresh_token']
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except TokenError as ex:
+            return Response({'Error': str(ex)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangePasswordViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin):
+    serializer_class = ChangePasswordSerializer
+    permission_classes = [permissions.IsAuthenticated, ]
+
+    def update(self, request):
+        user = Customer.objects.get(username=request.user)
+        change_serializer = self.serializer_class(data=request.data, context={'request': request}, instance=user)
+        if change_serializer.is_valid() and user.check_password(change_serializer.validated_data['old_password']):
+            change_serializer.save()
+            return Response({'data': change_serializer.validated_data,
+                             'message': 'password was changed'}, status=status.HTTP_200_OK)
+        return Response({'error': 'new password is old password.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ForgotPasswordView(generics.GenericAPIView):
+    serializer_class = ForgotPasswordSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        forgot_serializer = self.serializer_class(data=request.data)
+        forgot_serializer.is_valid(raise_exception=True)
+        try:
+            user = Customer.objects.get(email=forgot_serializer.validated_data['email'])
+            subject = 'Смена пароля для пользователя: ' + user.username
+            message = 'Пожалуйста, перейдите по следующей ссылке, чтобы восстановить (сбросить) пароль, который ' \
+                      'вы забыли: http://'
+            send_to_email(request=request, user=user, subject=subject, message=message, name_url='reset_password')
+            return Response({'data': forgot_serializer.data,
+                             'message': 'На вашу почту было отправлено сообщение чтобы сменить (восттановить) пароль'},
+                            status=status.HTTP_200_OK)
+        except Customer.DoesNotExist:
+            return Response({'error': "user with this email doesn't exist"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ResetPasswordViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin):
+    serializer_class = ResetPasswordSerializer
+
+    def update(self, request, uidb64, token):
+        uid = urlsafe_base64_decode(uidb64)
+        user = Customer.objects.get(pk=uid)
+        if user is not None and account_activation_token.check_token(user, token):
+            reset_serializer = self.serializer_class(user, data=request.data)
+            if reset_serializer.is_valid() and not user.check_password(reset_serializer.validated_data['new_password']):
+                reset_serializer.save()
+                return Response({'data': reset_serializer.validated_data,
+                                 'message': 'password was changed'},
+                                status=status.HTTP_200_OK)
+            return Response({'error': 'new password is old password'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateUsernameEmailViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin):
+    serializer_class = UpdateUsernameEmailSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+        user = Customer.objects.get(username=request.user)
+        update_serializer = self.serializer_class(data=request.data, instance=user)
+        if update_serializer.is_valid():
+            update_serializer.save()
+            return Response({'data': update_serializer.validated_data,
+                             'message': 'username was changed or (and) email was changed'}, status=status.HTTP_200_OK)
+        return Response({'error': update_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

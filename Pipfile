@@ -16,6 +16,8 @@ pytest = "*"
 pytest-django = "*"
 django-countries = "*"
 django-money = "*"
+six = "*"
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 
