@@ -12,19 +12,18 @@ class Customer(AbstractUser):  # Покупатель (пользователь)
         default_currency="USD",
         verbose_name="Customer balance",
         default=None,
-        null=True
+        null=True,
     )  # Баланс
-    date_birth = models.DateField(default=None, null=True, blank=False, verbose_name="Customer date birth")
+    date_birth = models.DateField(
+        default=None, null=True, blank=False, verbose_name="Customer date birth"
+    )
     passport = models.CharField(
         default=None, null=True, max_length=10, verbose_name="Customer passport"
     )  # Серия и номер паспорта
 
     def tokens(self):
         refresh = RefreshToken.for_user(self)
-        return {
-            "refresh": str(refresh),
-            "access": str(refresh.access_token)
-        }
+        return {"refresh": str(refresh), "access": str(refresh.access_token)}
 
     class Meta:
         db_table = "customer"
