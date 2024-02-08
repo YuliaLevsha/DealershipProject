@@ -1,5 +1,5 @@
 from rest_framework.exceptions import AuthenticationFailed
-from Customer.models import *
+from Customer.models import Customer
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 

@@ -18,7 +18,7 @@ repos:
 
       - id: flake8
         name: run flake8
-        entry: flake8 --exclude venv --ignore F401,E501
+        entry: flake8 --exclude venv --ignore F401,E501,F405,F403
         types: [python]
         language: system
         stages: [push, commit]

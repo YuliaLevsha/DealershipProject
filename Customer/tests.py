@@ -49,7 +49,7 @@ class LogoutTest(TestCase):
     def setUp(self) -> None:
         self.user = Customer.objects.create_user(username=USER_NAME, email=EMAIL, password=PASSWORD)
         self.client = APIClient()
-        self.refresh_token= self.user.tokens()['refresh']
+        self.refresh_token = self.user.tokens()['refresh']
         self.access_token = self.user.tokens()['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
 
