@@ -25,12 +25,12 @@ jobs:
         run: echo "${{ secrets.ENV_FILE }}" > .env
 
       - name: migrations
-        run: |
-          python manage.py makemigrations
-          docker-compose run django python manage.py migrate 
+        run: python manage.py makemigrations
 
       - name: set up docker
-        run: docker-compose up -d --build
+        run: |
+          docker-compose up -d --build
+          docker-compose run django python manage.py migrate
 
       - name: pytest
         run: docker-compose exec -T django python manage.py test
