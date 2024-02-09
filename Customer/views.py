@@ -3,6 +3,8 @@ from django.contrib.sites.shortcuts import get_current_site
 from rest_framework.response import Response
 from django.urls import reverse_lazy
 from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from Customer.serializers import *
 from rest_framework import mixins, status, viewsets, generics, permissions
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
