@@ -10,13 +10,12 @@ services:
       - .env
     volumes:
       - postgresdb_data:/var/lib/postgresql/data
+    networks:
+      - custom
 
   django:
     build: .
-    command: sh -c "python manage.py makemigrations &&
-                    python manage.py migrate &&
-                    python manage.py runserver 0.0.0.0:8000 &&
-                    python manage.py shell"
+    command: sh -c "python manage.py runserver 0.0.0.0:8000"
     container_name: django
     ports:
       - "8000:8000"
@@ -26,6 +25,12 @@ services:
       - postgres
     volumes:
       - ./:/app
+    networks:
+      - custom
 
 volumes:
   postgresdb_data:
+
+networks:
+  custom:
+    driver: bridge
