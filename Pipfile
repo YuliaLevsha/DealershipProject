@@ -17,9 +17,10 @@ django-countries = "*"
 django-money = "*"
 six = "*"
 djangorestframework-simplejwt = "*"
+django-stubs = "*"
+mypy = "*"
 
 [dev-packages]
-mypy = "*"
 
 [requires]
 python_version = "3.11"
