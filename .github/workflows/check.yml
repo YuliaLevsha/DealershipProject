@@ -40,8 +40,8 @@ jobs:
 
       - name: mypy
         run: |
-          pip install mypy fastapi
-          mypy . --exclude venv --explicit-package-bases -V
+          pip install mypy
+          mypy . --exclude venv
 
       - name: flake8
         run: |
