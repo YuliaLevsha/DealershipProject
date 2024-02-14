@@ -25,7 +25,7 @@ repos:
 
       - id: mypy
         name: run mypy
-        entry: mypy . --exclude venv
+        entry: mypy . --install-types
         types: [python]
         language: system
         stages: [push, commit]
