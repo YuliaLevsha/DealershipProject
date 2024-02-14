@@ -8,7 +8,6 @@ django = "*"
 djangorestframework = "*"
 black = "*"
 flake8 = "*"
-mypy = "*"
 psycopg2 = "*"
 python-dotenv = "*"
 pre-commit = "*"
@@ -20,6 +19,7 @@ six = "*"
 djangorestframework-simplejwt = "*"
 
 [dev-packages]
+mypy = "*"
 
 [requires]
 python_version = "3.11"
