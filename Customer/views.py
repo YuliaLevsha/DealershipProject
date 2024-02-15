@@ -20,11 +20,13 @@ class RegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
             user = Customer.objects.get(
                 email=register_serializer.validated_data.get("email")
             )
-            send_activation_email(request=request, user=user, action_type="confirm_email")
+            send_activation_email(
+                request=request, user=user, action_type="confirm_email"
+            )
             return Response(
                 {
                     "data": register_serializer.validated_data,
-                    "message": "На вашу почту было отправлено сообщение для подтверждения вашей почты"
+                    "message": "На вашу почту было отправлено сообщение для подтверждения вашей почты",
                 },
                 status=status.HTTP_201_CREATED,
             )
@@ -104,7 +106,9 @@ class ForgotPasswordView(generics.GenericAPIView):
         forgot_serializer.is_valid(raise_exception=True)
         try:
             user = Customer.objects.get(email=forgot_serializer.validated_data["email"])
-            send_activation_email(request=request, user=user, action_type="reset_password")
+            send_activation_email(
+                request=request, user=user, action_type="reset_password"
+            )
             return Response(
                 {
                     "data": forgot_serializer.data,

@@ -170,12 +170,13 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 
-MESSAGE_TEMPLATES = {'confirm_email': {'subject': 'Подтверждение электронного адреса',
-                                       'message': "Пожалуйста, перейдите по ссылке, чтобы подтвердить электронную "
-                                                  "почту:"
-                                       },
-                     'reset_password': {'subject': 'Сброс пароля',
-                                        'message': "Пожалуйста, перейдите по ссылке, чтобы сбросить пароль, который вы "
-                                                   "забыли: "
-                                        }
-                     }
+MESSAGE_TEMPLATES = {
+    "confirm_email": {
+        "subject": "Подтверждение электронного адреса",
+        "message": "Пожалуйста, перейдите по ссылке, чтобы подтвердить электронную почту:",
+    },
+    "reset_password": {
+        "subject": "Сброс пароля",
+        "message": "Пожалуйста, перейдите по ссылке, чтобы сбросить пароль, который вы забыли: ",
+    },
+}

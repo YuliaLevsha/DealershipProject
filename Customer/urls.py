@@ -7,7 +7,7 @@ urlpatterns = [
     path(
         "confirm-email/<uidb64>/<token>/",
         UserConfirmEmailViewSet.as_view({"get": "retrieve"}),
-        name="confirm_email"
+        name="confirm_email",
     ),
     path("login/", LoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
