@@ -171,7 +171,9 @@ class UpdateUsernameEmailViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixi
     permission_classes = [permissions.IsAuthenticated]
 
     def update(self, request, *args, **kwargs):
-        update_serializer = self.serializer_class(data=request.data, instance=request.user)
+        update_serializer = self.serializer_class(
+            data=request.data, instance=request.user
+        )
         if update_serializer.is_valid():
             update_serializer.save()
             return Response(
