@@ -41,7 +41,7 @@ jobs:
       - name: mypy
         run: |
           pip install mypy
-          mypy
+          mypy --install-types
 
       - name: flake8
         run: |
