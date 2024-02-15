@@ -27,6 +27,44 @@ services:
       - ./:/app
     networks:
       - custom
+  
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - custom
+  
+  celery:
+    build: .
+    container_name: celery
+    command: celery -A DjangoProject worker -l info
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+    depends_on:
+      - django
+      - redis
+      - postgres
+    networks:
+      - custom
+  
+  celerybeat:
+    build: .
+    container_name: celerybeat
+    command: celery -A DjangoProject beat -l info
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+    depends_on:
+      - celery
+      - redis
+      - postgres
+    networks:
+      - custom
 
 volumes:
   postgresdb_data:

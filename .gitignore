@@ -9,3 +9,5 @@
 .mypy_cache
 
 .vscode
+
+celerybeat*

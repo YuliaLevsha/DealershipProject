@@ -18,6 +18,10 @@ django-money = "*"
 six = "*"
 djangorestframework-simplejwt = "*"
 mypy = "*"
+celery = "*"
+redis = "*"
+django-celery-beat = "*"
+django-celery-results = "*"
 
 [dev-packages]
 
