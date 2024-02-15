@@ -1,32 +1,10 @@
-import os
-from django.contrib.sites.shortcuts import get_current_site
 from rest_framework.response import Response
-from django.urls import reverse_lazy
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from Customer.serializers import *
 from rest_framework import mixins, status, viewsets, generics, permissions
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_decode
 from Customer.tokens import account_activation_token
-from django.core.mail import send_mail
-from django.http import JsonResponse
-
-
-def send_to_email(request, subject, user, name_url, message):
-    current_site = get_current_site(request)
-    token = account_activation_token.make_token(user)
-    uid = urlsafe_base64_encode(force_bytes(user.pk))
-    domain = current_site.domain
-    activation_url = reverse_lazy(name_url, kwargs={"uidb64": uid, "token": token})
-    send_mail(
-        subject=subject,
-        message=message + f"{domain}{activation_url}",
-        from_email=os.environ.get("EMAIL_HOST_USER"),
-        recipient_list=[user.email],
-        fail_silently=False,
-    )
 
 
 class RegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
@@ -72,8 +50,8 @@ class UserConfirmEmailViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin
         if user is not None and account_activation_token.check_token(user, token):
             user.is_active = True
             user.save()
-            return JsonResponse({"Email was confirmed": "Yes!"})
-        return JsonResponse({"Have access": "No!"})
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class LoginView(generics.GenericAPIView):
@@ -83,7 +61,7 @@ class LoginView(generics.GenericAPIView):
     def post(self, request):
         login_serializer = self.serializer_class(data=request.data)
         login_serializer.is_valid(raise_exception=True)
-        return Response({"data": login_serializer.data}, status=status.HTTP_200_OK)
+        return Response(login_serializer.data, status=status.HTTP_200_OK)
 
 
 class LogoutView(generics.GenericAPIView):
@@ -96,7 +74,7 @@ class LogoutView(generics.GenericAPIView):
             refresh_token = request.data["refresh_token"]
             token = RefreshToken(refresh_token)
             token.blacklist()
-            return Response(status=status.HTTP_205_RESET_CONTENT)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except TokenError as ex:
             return Response({"Error": str(ex)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -108,12 +86,11 @@ class ChangePasswordViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin):
     ]
 
     def update(self, request):
-        user = Customer.objects.get(username=request.user)
         change_serializer = self.serializer_class(
-            data=request.data, context={"request": request}, instance=user
+            data=request.data, context={"request": request}, instance=request.user
         )
-        if change_serializer.is_valid() and user.check_password(
-            change_serializer.validated_data["old_password"]
+        if change_serializer.is_valid() and not request.user.check_password(
+            change_serializer.validated_data["new_password"]
         ):
             change_serializer.save()
             return Response(
@@ -194,8 +171,7 @@ class UpdateUsernameEmailViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixi
     permission_classes = [permissions.IsAuthenticated]
 
     def update(self, request, *args, **kwargs):
-        user = Customer.objects.get(username=request.user)
-        update_serializer = self.serializer_class(data=request.data, instance=user)
+        update_serializer = self.serializer_class(data=request.data, instance=request.user)
         if update_serializer.is_valid():
             update_serializer.save()
             return Response(
