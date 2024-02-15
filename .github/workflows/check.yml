@@ -41,7 +41,7 @@ jobs:
       - name: mypy
         run: |
           pip install mypy
-          mypy . --exclude venv  --install-types
+          mypy
 
       - name: flake8
         run: |

@@ -18,8 +18,6 @@ django-money = "*"
 six = "*"
 djangorestframework-simplejwt = "*"
 mypy = "*"
-django-stubs = {extras = ["compatible-mypy"], version = "*"}
-djangorestframework-stubs = "*"
 
 [dev-packages]
 

@@ -5,9 +5,9 @@ from Customer.views import *
 urlpatterns = [
     path("register/", RegisterViewSet.as_view({"post": "create"}), name="registration"),
     path(
-        "confirm-email/<str:uidb64>/<str:token>",
+        "confirm-email/<uidb64>/<token>/",
         UserConfirmEmailViewSet.as_view({"get": "retrieve"}),
-        name="confirm_email",
+        name="confirm_email"
     ),
     path("login/", LoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
@@ -18,7 +18,7 @@ urlpatterns = [
     ),
     path("forgot-password/", ForgotPasswordView.as_view(), name="forgot_password"),
     path(
-        "reset-password/<str:uidb64>/<str:token>",
+        "reset-password/<uidb64>/<token>",
         ResetPasswordViewSet.as_view({"put": "update"}),
         name="reset_password",
     ),

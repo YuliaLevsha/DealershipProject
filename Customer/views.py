@@ -5,6 +5,7 @@ from Customer.serializers import *
 from rest_framework import mixins, status, viewsets, generics, permissions
 from django.utils.http import urlsafe_base64_decode
 from Customer.tokens import account_activation_token
+from Customer.services import send_activation_email
 
 
 class RegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
@@ -16,26 +17,14 @@ class RegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
         register_serializer = self.serializer_class(data=request.data)
         if register_serializer.is_valid():
             register_serializer.save()
-
-            subject = "Подтверждение своего электронного адреса"
             user = Customer.objects.get(
                 email=register_serializer.validated_data.get("email")
             )
-            message = (
-                "Пожалуйста, перейдите по следующей ссылке, чтобы подтвердить свой адрес электронной почты: "
-                "http://"
-            )
-            send_to_email(
-                request=request,
-                subject=subject,
-                user=user,
-                message=message,
-                name_url="confirm_email",
-            )
+            send_activation_email(request=request, user=user, action_type="confirm_email")
             return Response(
                 {
                     "data": register_serializer.validated_data,
-                    "message": "На вашу почту было отправлено сообщение для подтверждения вашей почты",
+                    "message": "На вашу почту было отправлено сообщение для подтверждения вашей почты"
                 },
                 status=status.HTTP_201_CREATED,
             )
@@ -115,18 +104,7 @@ class ForgotPasswordView(generics.GenericAPIView):
         forgot_serializer.is_valid(raise_exception=True)
         try:
             user = Customer.objects.get(email=forgot_serializer.validated_data["email"])
-            subject = "Смена пароля для пользователя: " + user.username
-            message = (
-                "Пожалуйста, перейдите по следующей ссылке, чтобы восстановить (сбросить) пароль, который "
-                "вы забыли: http://"
-            )
-            send_to_email(
-                request=request,
-                user=user,
-                subject=subject,
-                message=message,
-                name_url="reset_password",
-            )
+            send_activation_email(request=request, user=user, action_type="reset_password")
             return Response(
                 {
                     "data": forgot_serializer.data,
