@@ -9,7 +9,9 @@ from DjangoProject.settings import MESSAGE_TEMPLATES
 from Customer.models import Customer
 
 
-def form_message(request: HttpRequest, user: Customer, template: str, action_type: str) -> str:
+def form_message(
+    request: HttpRequest, user: Customer, template: str, action_type: str
+) -> str:
     """Формирование сообщения для отправки на почту"""
     activation_url = reverse_lazy(
         action_type,
@@ -22,7 +24,9 @@ def form_message(request: HttpRequest, user: Customer, template: str, action_typ
     return message
 
 
-def send_activation_email(request: HttpRequest, user: Customer, action_type: str) -> None:
+def send_activation_email(
+    request: HttpRequest, user: Customer, action_type: str
+) -> None:
     """Передача сообщения в функцию отправления.
     action_type - name для url, требующего подтверждения по почте.
     settings содержит MESSAGE_TEMPLATES, который содержит шаблоны

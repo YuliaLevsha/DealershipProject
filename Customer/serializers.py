@@ -2,7 +2,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from Customer.models import Customer
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from typing import Dict
+from typing import Dict, Any
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -19,7 +19,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("passwords do not match")
         return attrs
 
-    def create(self, validated_data: Dict) -> Customer:
+    def create(self, validated_data: Dict) -> Any:
         user = Customer.objects.create(
             username=validated_data["username"],
             email=validated_data["email"],
