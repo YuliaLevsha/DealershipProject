@@ -10,6 +10,8 @@ services:
       - .env
     volumes:
       - postgresdb_data:/var/lib/postgresql/data
+    networks:
+      - custom
 
   django:
     build: .
@@ -23,6 +25,12 @@ services:
       - postgres
     volumes:
       - ./:/app
+    networks:
+      - custom
 
 volumes:
   postgresdb_data:
+
+networks:
+  custom:
+    driver: bridge

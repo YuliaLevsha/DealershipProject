@@ -2,6 +2,8 @@ from django.db import models
 from base_model import BaseModel
 from django.contrib.auth.models import AbstractUser
 from djmoney.models.fields import MoneyField
+from rest_framework_simplejwt.tokens import RefreshToken
+from typing import Dict
 
 
 class Customer(AbstractUser):  # Покупатель (пользователь)
@@ -10,11 +12,19 @@ class Customer(AbstractUser):  # Покупатель (пользователь)
         decimal_places=2,
         default_currency="USD",
         verbose_name="Customer balance",
+        default=None,
+        null=True,
     )  # Баланс
-    date_birth = models.DateField(blank=False, verbose_name="Customer date birth")
+    date_birth = models.DateField(
+        default=None, null=True, blank=False, verbose_name="Customer date birth"
+    )
     passport = models.CharField(
-        max_length=10, verbose_name="Customer passport"
+        default=None, null=True, max_length=10, verbose_name="Customer passport"
     )  # Серия и номер паспорта
+
+    def tokens(self) -> Dict:
+        refresh = RefreshToken.for_user(self)
+        return {"refresh": str(refresh), "access": str(refresh.access_token)}
 
     class Meta:
         db_table = "customer"

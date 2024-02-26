@@ -8,7 +8,6 @@ django = "*"
 djangorestframework = "*"
 black = "*"
 flake8 = "*"
-mypy = "*"
 psycopg2 = "*"
 python-dotenv = "*"
 pre-commit = "*"
@@ -16,6 +15,9 @@ pytest = "*"
 pytest-django = "*"
 django-countries = "*"
 django-money = "*"
+six = "*"
+djangorestframework-simplejwt = "*"
+mypy = "*"
 
 [dev-packages]
 

@@ -18,14 +18,14 @@ repos:
 
       - id: flake8
         name: run flake8
-        entry: flake8 --exclude venv --ignore F401,E501
+        entry: flake8 --exclude venv --ignore F401,E501,F405,F403,W503
         types: [python]
         language: system
         stages: [push, commit]
 
       - id: mypy
         name: run mypy
-        entry: mypy . --exclude venv --explicit-package-bases -V
+        entry: python -m mypy
         types: [python]
         language: system
         stages: [push, commit]
