@@ -25,7 +25,7 @@ repos:
 
       - id: mypy
         name: run mypy
-        entry: mypy
+        entry: python -m mypy
         types: [python]
         language: system
         stages: [push, commit]
