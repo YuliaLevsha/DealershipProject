@@ -25,7 +25,7 @@ repos:
 
       - id: mypy
         name: run mypy
-        entry: mypy --install-types --non-interactive
+        entry: mypy
         types: [python]
         language: system
         stages: [push, commit]
