@@ -2,6 +2,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from Customer.models import Customer
 from rest_framework import serializers
 from django.contrib.auth import authenticate
+from typing import Dict
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -11,14 +12,14 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = Customer
         fields = ("username", "email", "password", "password2")
 
-    def validate(self, attrs):
+    def validate(self, attrs: Dict) -> Dict:
         password = attrs.get("password")
         password2 = attrs.get("password2")
         if password != password2:
             raise serializers.ValidationError("passwords do not match")
         return attrs
 
-    def create(self, validated_data):
+    def create(self, validated_data: Dict) -> Customer:
         user = Customer.objects.create(
             username=validated_data["username"],
             email=validated_data["email"],
@@ -34,7 +35,7 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=128, write_only=True)
     tokens = serializers.DictField(read_only=True)
 
-    def validate(self, attrs):
+    def validate(self, attrs: Dict) -> Dict:
         username = attrs.get("username")
         password = attrs.get("password")
         user = authenticate(username=username, password=password)
@@ -56,14 +57,14 @@ class ResetPasswordSerializer(serializers.Serializer):
         max_length=128, write_only=True, required=True
     )
 
-    def validate(self, attrs):
+    def validate(self, attrs: Dict) -> Dict:
         new_password = attrs.get("new_password")
         confirmation_password = attrs.get("confirmation_password")
         if new_password != confirmation_password:
             raise serializers.ValidationError("passwords do not match")
         return attrs
 
-    def update(self, instance, validated_data):
+    def update(self, instance: Customer, validated_data: Dict) -> Customer:
         instance.set_password(validated_data["new_password"])
         instance.save()
         return instance
@@ -72,7 +73,7 @@ class ResetPasswordSerializer(serializers.Serializer):
 class ChangePasswordSerializer(ResetPasswordSerializer):
     old_password = serializers.CharField(max_length=128, write_only=True, required=True)
 
-    def validate_old_password(self, old_password):
+    def validate_old_password(self, old_password: str) -> str:
         user = self.context["request"].user
         if not user.check_password(old_password):
             raise serializers.ValidationError(

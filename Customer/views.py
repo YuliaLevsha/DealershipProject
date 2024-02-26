@@ -6,6 +6,8 @@ from rest_framework import mixins, status, viewsets, generics, permissions
 from django.utils.http import urlsafe_base64_decode
 from Customer.tokens import account_activation_token
 from Customer.services import send_activation_email
+from django.http import HttpRequest
+from typing import Any
 
 
 class RegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
@@ -13,7 +15,7 @@ class RegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
 
-    def create(self, request, *args, **kwargs):
+    def create(self, request: HttpRequest, *args: Any, **kwargs: Dict) -> Response:
         register_serializer = self.serializer_class(data=request.data)
         if register_serializer.is_valid():
             register_serializer.save()
@@ -35,7 +37,7 @@ class RegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
 
 class UserConfirmEmailViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
 
-    def retrieve(self, request, uidb64, token):
+    def retrieve(self, request: HttpRequest, uidb64: str, token: str) -> Response:
         uid = urlsafe_base64_decode(uidb64)
         user = Customer.objects.get(pk=uid)
         if user is not None and account_activation_token.check_token(user, token):
@@ -49,7 +51,7 @@ class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
     permission_classes = [permissions.AllowAny]
 
-    def post(self, request):
+    def post(self, request: HttpRequest) -> Response:
         login_serializer = self.serializer_class(data=request.data)
         login_serializer.is_valid(raise_exception=True)
         return Response(login_serializer.data, status=status.HTTP_200_OK)
@@ -60,7 +62,7 @@ class LogoutView(generics.GenericAPIView):
         permissions.IsAuthenticated,
     ]
 
-    def post(self, request):
+    def post(self, request: HttpRequest) -> Response:
         try:
             refresh_token = request.data["refresh_token"]
             token = RefreshToken(refresh_token)
@@ -76,7 +78,7 @@ class ChangePasswordViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin):
         permissions.IsAuthenticated,
     ]
 
-    def update(self, request):
+    def update(self, request: HttpRequest) -> Response:
         change_serializer = self.serializer_class(
             data=request.data, context={"request": request}, instance=request.user
         )
@@ -101,7 +103,7 @@ class ForgotPasswordView(generics.GenericAPIView):
     serializer_class = ForgotPasswordSerializer
     permission_classes = [permissions.AllowAny]
 
-    def post(self, request):
+    def post(self, request: HttpRequest) -> Response:
         forgot_serializer = self.serializer_class(data=request.data)
         forgot_serializer.is_valid(raise_exception=True)
         try:
@@ -126,7 +128,7 @@ class ForgotPasswordView(generics.GenericAPIView):
 class ResetPasswordViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin):
     serializer_class = ResetPasswordSerializer
 
-    def update(self, request, uidb64, token):
+    def update(self, request: HttpRequest, uidb64: str, token: str) -> Response:
         uid = urlsafe_base64_decode(uidb64)
         user = Customer.objects.get(pk=uid)
         if user is not None and account_activation_token.check_token(user, token):
@@ -146,13 +148,14 @@ class ResetPasswordViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin):
                 {"error": "new password is old password"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateUsernameEmailViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin):
     serializer_class = UpdateUsernameEmailSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def update(self, request, *args, **kwargs):
+    def update(self, request: HttpRequest, *args: Any, **kwargs: Dict) -> Response:
         update_serializer = self.serializer_class(
             data=request.data, instance=request.user
         )

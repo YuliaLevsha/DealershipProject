@@ -3,6 +3,7 @@ from base_model import BaseModel
 from django.contrib.auth.models import AbstractUser
 from djmoney.models.fields import MoneyField
 from rest_framework_simplejwt.tokens import RefreshToken
+from typing import Dict
 
 
 class Customer(AbstractUser):  # Покупатель (пользователь)
@@ -21,7 +22,7 @@ class Customer(AbstractUser):  # Покупатель (пользователь)
         default=None, null=True, max_length=10, verbose_name="Customer passport"
     )  # Серия и номер паспорта
 
-    def tokens(self):
+    def tokens(self) -> Dict:
         refresh = RefreshToken.for_user(self)
         return {"refresh": str(refresh), "access": str(refresh.access_token)}
 

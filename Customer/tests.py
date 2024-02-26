@@ -24,7 +24,7 @@ class AuthTest(TestCase):
         self.refresh_token = self.user.tokens()["refresh"]
         self.access_token = self.user.tokens()["access"]
 
-    def test_register(self):
+    def test_register(self) -> None:
         bad_response = self.client.post(
             "/api/register/",
             data={
@@ -46,7 +46,7 @@ class AuthTest(TestCase):
         self.assertEquals(correct_response.status_code, 201)
         self.assertEquals(bad_response.status_code, 400)
 
-    def test_login(self):
+    def test_login(self) -> None:
         bad_response = self.client.post(
             "/api/login/", data={"username": USER_NAME, "password": "fakepassword"}
         )
@@ -60,7 +60,7 @@ class AuthTest(TestCase):
         self.assertEquals(correct_response.status_code, 200)
         self.assertEquals(bad_response.status_code, 401)
 
-    def test_logout(self):
+    def test_logout(self) -> None:
         bad_response = self.client.post(
             "/api/logout/",
             data={"refresh_token": ""},
@@ -74,7 +74,7 @@ class AuthTest(TestCase):
         self.assertEquals(correct_response.status_code, 204)
         self.assertEquals(bad_response.status_code, 400)
 
-    def test_confirm_email(self):
+    def test_confirm_email(self) -> None:
         correct_url = reverse(
             "confirm_email", kwargs={"uidb64": self.uidb64, "token": self.token}
         )
@@ -105,7 +105,7 @@ class UserTest(TestCase):
         self.uidb64 = urlsafe_base64_encode(force_bytes(self.user.pk))
         self.token = account_activation_token.make_token(self.user)
 
-    def test_forgot_password(self):
+    def test_forgot_password(self) -> None:
         bad_response = self.client.post(
             "/api/forgot-password/", data={"email": "help@mail.ru"}
         )
@@ -115,7 +115,7 @@ class UserTest(TestCase):
         self.assertEquals(correct_response.status_code, 200)
         self.assertEquals(bad_response.status_code, 400)
 
-    def test_change_password(self):
+    def test_change_password(self) -> None:
         bad_response = self.client.put(
             "/api/change-password/",
             data={
@@ -141,7 +141,7 @@ class UserTest(TestCase):
         self.assertEquals(bad_response.status_code, 400)
         self.assertEquals(test_user.check_password("whitesnake"), True)
 
-    def test_change_username_email(self):
+    def test_change_username_email(self) -> None:
         bad_response = self.client.put(
             "/api/update-user/",
             data={"username": "YuliaL", "email": "help.mail"},
@@ -155,7 +155,7 @@ class UserTest(TestCase):
         self.assertEquals(correct_response.status_code, 200)
         self.assertEquals(bad_response.status_code, 400)
 
-    def test_reset_password(self):
+    def test_reset_password(self) -> None:
         url = reverse(
             "reset_password", kwargs={"uidb64": self.uidb64, "token": self.token}
         )
