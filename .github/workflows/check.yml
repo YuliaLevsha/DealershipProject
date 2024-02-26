@@ -12,7 +12,7 @@ jobs:
 
       - name: run pre-commit
         run: |
-          pip install pre-commit black mypy flake8
+          pip install pre-commit black mypy flake8 types-six
           pre-commit run --all-files
 
   docker:
