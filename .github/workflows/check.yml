@@ -40,7 +40,7 @@ jobs:
 
       - name: mypy
         run: |
-          pip install mypy
+          pip install mypy types-six
           python -m mypy
 
       - name: flake8
