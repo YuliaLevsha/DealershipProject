@@ -3,12 +3,15 @@ from django_countries.fields import CountryField
 from django.core.validators import MaxValueValidator
 from djmoney.models.fields import MoneyField
 from base_model import BaseModel, G8Countries
+from typing import Any
 
 
 class CarDealership(BaseModel):  # Автосалон
     name = models.CharField(max_length=255, verbose_name="Car dealership name")
-    location = CountryField(
-        countries=G8Countries, verbose_name="Car dealership country"
+    location = models.CharField(
+        max_length=200,
+        choices=CountryField(countries=G8Countries).choices,
+        verbose_name="Car dealership country",
     )  # Местоположение автосалона
     balance = MoneyField(
         max_digits=14,
@@ -32,6 +35,9 @@ class CarDealership(BaseModel):  # Автосалон
         related_name="dealerships",
     )
 
+    def __str__(self) -> Any:
+        return self.name
+
     class Meta:
         db_table = "car_dealership"
         verbose_name = "CarDealership"
@@ -54,6 +60,9 @@ class Discount(BaseModel):  # Скидка
     )  # На какой салон распространяется скидка
     name = models.CharField(max_length=255, verbose_name="Discount name")
     description = models.CharField(max_length=255, verbose_name="Discount description")
+
+    def __str__(self) -> Any:
+        return str(self.percent)
 
     class Meta:
         db_table = "discounts"

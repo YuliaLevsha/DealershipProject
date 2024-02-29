@@ -18,7 +18,7 @@ urlpatterns = [
     ),
     path("forgot-password/", ForgotPasswordView.as_view(), name="forgot_password"),
     path(
-        "reset-password/<uidb64>/<token>",
+        "reset-password/<uidb64>/<token>/",
         ResetPasswordViewSet.as_view({"put": "update"}),
         name="reset_password",
     ),
@@ -27,4 +27,16 @@ urlpatterns = [
         UpdateUsernameEmailViewSet.as_view({"put": "update"}),
         name="update_user",
     ),
+    path(
+        "personal-info/",
+        AddAndUpdatePersonalInfo.as_view({"put": "update"}),
+        name="personal_info",
+    ),
+    path("create-offer/", ConfirmEmailForOfferAndCreate.as_view(), name="create_offer"),
+    path(
+        "create-offer/<uidb64>/<token>/",
+        CreateFirstOfferViewSet.as_view({"post": "create"}),
+        name="confirm_offer",
+    ),
+    path("get-offers/", GetOffersViewSet.as_view({"get": "list"}), name="get_offers"),
 ]
