@@ -4,7 +4,8 @@ from rest_framework import serializers
 
 class DealerSerializer(
     serializers.ModelSerializer
-):  # сериализатор модели Dealer (поставщик)
+):  
+    """сериализатор модели Dealer (поставщик)"""
     customers_count = serializers.StringRelatedField()
     dealer_cars = serializers.StringRelatedField(many=True)
 
@@ -15,13 +16,15 @@ class DealerSerializer(
 
 class CarModelSerializer(
     serializers.ModelSerializer
-):  # сериализатор модели CarModel (марка машины)
+):  
+    """сериализатор модели CarModel (марка машины)"""
     class Meta:
         model = CarModel
         fields = ("name",)
 
 
-class CarSerializer(serializers.ModelSerializer):  # сериализатор модели Car (машина)
+class CarSerializer(serializers.ModelSerializer):  
+    """сериализатор модели Car (машина)"""
     car_model = CarModelSerializer()
 
     class Meta:
@@ -40,7 +43,8 @@ class CarSerializer(serializers.ModelSerializer):  # сериализатор м
 
 class DealerCarsSerializer(
     serializers.ModelSerializer
-):  # сериализатор модели DealerCars (машины поставщика)
+):  
+    """сериализатор модели DealerCars (машины поставщика)"""
     dealer = DealerSerializer()
     car = CarSerializer()
     price = serializers.CharField()
