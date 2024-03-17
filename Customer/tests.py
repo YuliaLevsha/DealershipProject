@@ -168,3 +168,45 @@ class UserTest(TestCase):
         )
         self.assertEquals(correct_response.status_code, 200)
         self.assertEquals(bad_response.status_code, 400)
+
+    def test_add_update_personal_info(self) -> None:
+        correct_response = self.client.put(
+            "/api/personal-info/",
+            data={
+                "date_birth": "2003-04-27",
+                "passport": "MC1111111",
+                "balance": "5000",
+            },
+            HTTP_AUTHORIZATION=f"Bearer {self.access_token}",
+        )
+        bad_response = self.client.put(
+            "/api/personal-info/",
+            data={
+                "date_birth": "2003-04-27",
+                "passport": "MC1111111",
+                "balance": "7000",
+            },
+            HTTP_AUTHORIZATION=f"Bearer {self.access_token}",
+        )
+        self.assertEquals(correct_response.status_code, 200)
+        self.assertEquals(bad_response.status_code, 403)
+
+    def test_create_offer(self) -> None:
+        correct_response = self.client.post(
+            "/api/create-offer/",
+            HTTP_AUTHORIZATION=f"Bearer {self.access_token}",
+        )
+        url = reverse(
+            "confirm_offer", kwargs={"uidb64": self.uidb64, "token": self.token}
+        )
+        bad_response = self.client.post(
+            url,
+            data={
+                "max_price": 150.00,
+                "customer": self.user.pk,
+                "interested_in_car": 1,
+            },
+            HTTP_AUTHORIZATION=f"Bearer {self.access_token}",
+        )
+        self.assertEquals(correct_response.status_code, 200)
+        self.assertEquals(bad_response.status_code, 400)

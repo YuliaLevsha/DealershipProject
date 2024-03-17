@@ -1,5 +1,7 @@
-from rest_framework.exceptions import AuthenticationFailed
-from Customer.models import Customer
+from rest_framework.exceptions import AuthenticationFailed, PermissionDenied
+
+import Dealer.serializers
+from Customer.models import *
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from typing import Dict, Any
@@ -86,3 +88,33 @@ class UpdateUsernameEmailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = ("username", "email")
+
+
+class CustomerSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(read_only=True)
+    email = serializers.EmailField(read_only=True)
+
+    class Meta:
+        model = Customer
+        fields = ("username", "email", "date_birth", "passport", "balance")
+
+    def update(self, instance: Customer, validated_data: Dict) -> Customer:
+        instance.date_birth = validated_data.get("date_birth", instance.date_birth)
+        instance.passport = validated_data.get("passport", instance.passport)
+        if instance.balance is not None:
+            raise PermissionDenied("Balance can be updated only by admin!")
+        instance.balance = validated_data.get("balance", instance.balance)
+        instance.save()
+        return instance
+
+
+class CreateOfferSerializer(serializers.ModelSerializer):
+    max_price = serializers.CharField()
+
+    class Meta:
+        model = Offer
+        fields = ("max_price", "interested_in_car", "customer")
+
+
+class GetOfferSerializer(CreateOfferSerializer):
+    customer = CustomerSerializer()

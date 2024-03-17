@@ -3,6 +3,7 @@ from django_countries.fields import CountryField
 from base_model import BaseModel, G8Countries
 from django.core.validators import MaxValueValidator
 from djmoney.models.fields import MoneyField
+from typing import Any
 
 
 class Dealer(BaseModel):  # Поставщик
@@ -22,6 +23,9 @@ class Dealer(BaseModel):  # Поставщик
         related_name="dealers",
     )
 
+    def __str__(self) -> Any:
+        return self.name
+
     class Meta:
         db_table = "dealer"
         verbose_name = "Dealer"
@@ -29,6 +33,9 @@ class Dealer(BaseModel):  # Поставщик
 
 class CarModel(BaseModel):  # Модели машин
     name = models.CharField(max_length=255, verbose_name="Name model")
+
+    def __str__(self) -> Any:
+        return self.name
 
     class Meta:
         db_table = "car_model"
@@ -55,10 +62,25 @@ class Car(BaseModel):  # Машина
     type_drive = models.CharField(
         max_length=255, verbose_name="Car type drive"
     )  # Тип привода
-    country = CountryField(countries=G8Countries, verbose_name="Car country")
+    country = models.CharField(
+        max_length=200,
+        choices=CountryField(countries=G8Countries).choices,
+        verbose_name="Car country",
+    )
     volume_fuel_tank = models.PositiveIntegerField(
         blank=False, verbose_name="Car volume of fuel tank"
     )  # Объем топливного бака
+
+    def __str__(self) -> Any:
+        return (
+            str(self.car_model)
+            + " "
+            + self.car_color
+            + " "
+            + str(self.car_year)
+            + " "
+            + self.country
+        )
 
     class Meta:
         db_table = "car"
@@ -121,6 +143,15 @@ class DealersSalesHistory(
         default_currency="USD",
         verbose_name="Car price for car dealership",
     )  # цена покупки для автосалона
+
+    def __str__(self) -> Any:
+        return (
+            str(self.id_dealer_car)
+            + " "
+            + str(self.car_dealership)
+            + " "
+            + str(self.finally_cost)
+        )
 
     class Meta:
         db_table = "dealers_history"

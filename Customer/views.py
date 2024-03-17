@@ -171,3 +171,72 @@ class UpdateUsernameEmailViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixi
         return Response(
             {"error": update_serializer.errors}, status=status.HTTP_400_BAD_REQUEST
         )
+
+
+class AddAndUpdatePersonalInfo(viewsets.GenericViewSet, mixins.UpdateModelMixin):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def update(self, request: HttpRequest, *args: Any, **kwargs: Any) -> Response:
+        personal_info_serializer = self.serializer_class(
+            data=request.data, instance=request.user
+        )
+        if personal_info_serializer.is_valid():
+            personal_info_serializer.save()
+            return Response(
+                personal_info_serializer.validated_data, status=status.HTTP_200_OK
+            )
+        return Response(
+            {"error": personal_info_serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+
+class ConfirmEmailForOfferAndCreate(generics.GenericAPIView):
+    queryset = Offer.objects.all()
+    serializer_class = CreateOfferSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request: HttpRequest) -> Response:
+        customer = Customer.objects.get(username=request.user)
+        if Offer.objects.filter(customer=request.user.pk).exists():
+            offer_serializer = self.serializer_class(data=request.data)
+            if offer_serializer.is_valid():
+                offer_serializer.save()
+                return Response(offer_serializer.data, status=status.HTTP_201_CREATED)
+            return Response(offer_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            send_activation_email(
+                request=request, user=customer, action_type="confirm_offer"
+            )
+            return Response(
+                {
+                    "message": "На вашу почту было отправлено сообщение для создания offer",
+                },
+                status=status.HTTP_200_OK,
+            )
+
+
+class CreateFirstOfferViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
+    queryset = Offer.objects.all()
+    serializer_class = CreateOfferSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request: HttpRequest, *args: Any, **kwargs: Any) -> Response:
+        offer_serializer = self.serializer_class(data=request.data)
+        if offer_serializer.is_valid():
+            offer_serializer.save()
+            return Response(offer_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(offer_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetOffersViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+    queryset = Offer.objects.all()
+    serializer_class = GetOfferSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request: HttpRequest, *args: Any, **kwargs: Any) -> Response:
+        queryset = Offer.objects.filter(customer=request.user.pk)
+        offer_serializer = GetOfferSerializer(queryset, many=True)
+        return Response(offer_serializer.data, status=status.HTTP_200_OK)
