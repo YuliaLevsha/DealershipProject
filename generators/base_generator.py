@@ -1,4 +1,5 @@
-import random, string
+import random
+import string
 from Customer.models import Customer, Offer
 from Dealer.models import Dealer, Car, DealerCars, CarModel
 from CarDealership.models import CarDealership, AvailableCarModels, Discount
