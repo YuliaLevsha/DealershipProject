@@ -6,9 +6,10 @@ from Customer.models import Offer, CustomerPurchaseHistory
 from django.utils import timezone
 import random
 from moneyed import Money
+from typing import Any
 
 
-def check_discount(dealership: CarDealership) -> None | Discount:
+def check_discount(dealership: CarDealership) -> Any:
     current_date = timezone.now()
     discounts = Discount.objects.filter(
         car_dealership=dealership,
