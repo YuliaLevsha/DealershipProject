@@ -30,6 +30,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "django_countries",
+    "django_celery_beat",
+    "django_celery_results",
     "CarDealership.apps.CardealershipConfig",
     "Customer.apps.CustomerConfig",
     "Dealer.apps.DealerConfig",
@@ -184,3 +186,13 @@ MESSAGE_TEMPLATES = {
         "message": "Пожалуйста, перейдите по ссылке, чтобы создать первый offer: ",
     },
 }
+
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_TIMEZONE = "Europe/Minsk"
+CELERY_IMPORTS = ["tasks"]
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
