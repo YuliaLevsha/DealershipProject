@@ -27,7 +27,7 @@ services:
       - ./:/app
     networks:
       - custom
-  
+
   redis:
     image: redis:alpine
     container_name: redis
@@ -35,7 +35,7 @@ services:
       - "6379:6379"
     networks:
       - custom
-  
+
   celery:
     build: .
     container_name: celery
@@ -50,7 +50,7 @@ services:
       - postgres
     networks:
       - custom
-  
+
   celerybeat:
     build: .
     container_name: celerybeat
