@@ -16,8 +16,8 @@ class DealerViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
         name_value = self.request.GET.get("name")
         foundation_year_value = self.request.GET.get("foundation")
         customers_count_value = self.request.GET.get("customer_count")
-        
-        order_value = self.request.GET.get('order')
+
+        order_value = self.request.GET.get("order")
 
         q_filter = Q()
 
@@ -36,7 +36,7 @@ class DealerViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
 
         if q_filter:
             queryset = queryset.filter(q_filter)
-        
+
         if order_value:
             queryset = queryset.order_by(order_value)
 
@@ -61,8 +61,8 @@ class CarViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
         body_type_value = self.request.GET.get("body_type")
         type_drive_value = self.request.GET.get("type_drive")
         country_value = self.request.GET.get("country")
-        
-        order_value = self.request.GET.get('order')
+
+        order_value = self.request.GET.get("order")
 
         q_filter = Q()
 
@@ -97,7 +97,7 @@ class CarViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
 
         if q_filter:
             queryset = queryset.filter(q_filter)
-        
+
         if order_value:
             queryset = queryset.order_by(order_value)
 
@@ -118,8 +118,8 @@ class DealerCarsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
         queryset = super().get_queryset()
         dealer_name_value = self.request.GET.get("dealer")
         car_model_value = self.request.GET.get("car_model")
-        
-        order_value = self.request.GET.get('order')
+
+        order_value = self.request.GET.get("order")
 
         q_filter = Q()
 
@@ -134,7 +134,7 @@ class DealerCarsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
 
         if q_filter:
             queryset = queryset.filter(q_filter)
-        
+
         if order_value:
             queryset = queryset.order_by(order_value)
 

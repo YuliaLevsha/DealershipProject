@@ -15,8 +15,8 @@ class CarDealershipViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
         queryset = super().get_queryset()
         name_value = self.request.GET.get("name")
         location_value = self.request.GET.get("location")
-        
-        order_value = self.request.GET.get('order')
+
+        order_value = self.request.GET.get("order")
 
         q_filter = Q()
 
@@ -29,7 +29,7 @@ class CarDealershipViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
 
         if q_filter:
             queryset = queryset.filter(q_filter)
-        
+
         if order_value:
             queryset = queryset.order_by(order_value)
 
@@ -50,8 +50,8 @@ class AvailableCarModelsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
         queryset = super().get_queryset()
         car_model_name_value = self.request.GET.get("car_model")
         dealership_name_value = self.request.GET.get("dealership")
-        
-        order_value = self.request.GET.get('order')
+
+        order_value = self.request.GET.get("order")
 
         q_filter = Q()
 
@@ -66,7 +66,7 @@ class AvailableCarModelsViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
 
         if q_filter:
             queryset = queryset.filter(q_filter)
-        
+
         if order_value:
             queryset = queryset.order_by(order_value)
 

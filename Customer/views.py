@@ -235,15 +235,15 @@ class GetOffersViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     queryset = Offer.objects.all()
     serializer_class = GetOfferSerializer
     permission_classes = [permissions.IsAuthenticated]
-    
+
     def get_queryset(self) -> Any:
         queryset = super().get_queryset()
-        
-        order_value = self.request.GET.get('order')
-        
+
+        order_value = self.request.GET.get("order")
+
         if order_value:
             queryset = queryset.order_by(order_value)
-        
+
         return queryset
 
     def list(self, request: HttpRequest, *args: Any, **kwargs: Any) -> Response:
