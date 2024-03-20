@@ -9,14 +9,12 @@ class CarDealershipSerializer(serializers.ModelSerializer):
     dealership_cars = serializers.StringRelatedField(many=True)
     car_models = serializers.StringRelatedField(many=True)
     description_cars = serializers.JSONField()
-    balance = serializers.CharField()
 
     class Meta:
         model = CarDealership
         fields = (
             "name",
             "location",
-            "balance",
             "description_cars",
             "car_models",
             "dealership_cars",

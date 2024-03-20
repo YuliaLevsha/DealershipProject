@@ -109,6 +109,9 @@ class DealerCars(BaseModel):  # Машины поставщика с ценам�
         verbose_name="Car price from dealer",
     )
 
+    def __str__(self) -> str:
+        return str(self.dealer) + " " + str(self.car)
+
     class Meta:
         db_table = "dealer_cars"
         verbose_name = "DealerCars"
